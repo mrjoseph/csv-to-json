@@ -127,7 +127,6 @@ let csvToJson = new CSVToJson();
 var path = 'example.csv';
 
 /**
- * [description]
  * @param  path string Path to CSV file
  * @param  object JSON object converted from CSV file
  */
