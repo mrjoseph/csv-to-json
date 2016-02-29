@@ -1,13 +1,4 @@
 "use strict";
-/**
- * RULES
- * 	1. 	functional programs should be immutable. 
- * 		create new data structures instead of modifying ones that already exist
- * 		
- *  2.  functional programs should be stateless, which basically means they should 
- *  	perform every task as if for the first time, with no knowledge of 
- *  	what may or may not have happened earlier in the program’s execution
- */
 let fs = require('fs');
  
 class CSVToJson {
@@ -79,24 +70,13 @@ class CSVToJson {
 	}
 
 	read(path,fun){
-
-		/**
-		 * TO DO LIST
-		 * 2. Create a array of the keys from the csv of the first line.
-		 * 3. Create a new empty array to hold our csv row
-		 * 4. Create a array of the row containing the value
-		 * 5. Create a object for each row
-		 * 5. For each array item in our key row we will create a key value pair between the row title
-		 *    item and the row data
-		 */
 		 this.readFile(path)
 		.then(this.createArrayRows)
 		.then(this.createArrayKeyValue)
 		.then(this.updateCSVRowTItles)
 		.then(function(data){ 
 			 fun(data);
-		});
-		
+		});		
 	}
 
 	extend(obj1,obj2){
@@ -115,14 +95,6 @@ class CSVToJson {
 	  		item[obj] = item[obj].replace(regEx,"");
 	  	}
 	  });
-	//   var outputArr = [];  
-	//   var foo = str.map(function(item){
-	//     var arr = [];
-	//     item.map(function(elem){
-	//        arr.push(elem.match(regEx)[0]);
-	//     });
-	//     return arr;
-	// }); 
 	   return str;
 	}
 
@@ -144,10 +116,21 @@ class CSVToJson {
 	}
 } 
 
+/**
+ * Usage: Create a new object
+ */
 let csvToJson = new CSVToJson();
 
+/**
+ * File pathto csv file
+ */
 var path = 'example.csv';
 
+/**
+ * [description]
+ * @param  path string Path to CSV file
+ * @param  object JSON object converted from CSV file
+ */
 csvToJson.read(path,(file) => {
 	csvToJson.write(file,{
 		stripComma : true
