@@ -1,0 +1,20 @@
+{
+  "name": "csv-to-json",
+  "version": "1.0.0",
+  "description": "convert csv files to json",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mrjoseph/csv-to-json.git"
+  },
+  "keywords": [
+    "csv",
+    "json",
+    "converts"
+  ],
+  "author": "Trevor Joseph",
+  "license": "ISC"
+}
