@@ -8,52 +8,65 @@ class CSVToJson {
 		this.csvRowTitles;
 	}
 
-	readFile(file){
-
-		var data = fs.readFileSync(file, 'utf8');
-		if(data.length){
-			return new Promise(function(resolve,reject){
-				resolve(data);
-			});
-		} 
-	}
-
-	createArrayRows(data){
-		var row = data.split('\n');
+	readFile(file){	
 		return new Promise(function(resolve,reject){
-			resolve(row);
+			fs.readFile(file,'utf8',(err, data) => {
+	  			if (err) throw err;
+		  			resolve(data);	
+			});
 		});
 	}
+ 	/**
+ 	 * Split each row in the CSV into an Array
+ 	 * @param  {[type]} data from csv
+ 	 * @return {[type]}      [Promise
+ 	 */
+	createArrayRows(data){
+		var row = data.split('\n');
 
+		function removeEmpy(array){
+		  var _indexOf;
+		  var _arr = [];
+		  for(var i = 0; i < array.length; i++){
+		    if(array[i] !== ''){
+		     _arr.push(array[i]);
+		    }
+		  }
+		  return _arr;
+		}
+		return removeEmpy(row);
+	}
+  
 	createArrayKeyValue(data){
 		function createValueObject(data){
-			var arr;
+			var arr;  
 			var obj = {};
 			var arrVal = [];
 			var arrKey = [];
-		 	 
+			//var regEx = /(\d+\.\d+|[A-Z]\d+)+|(([0-9]+\/{1})+\d+)|([A-Z]\/.|[A-Za-z]+)|(\d+\.\d+|[0-9]+)|(\-\w+)\.(\d+)(|\w+)|("(.*?)")+/g;
+		 	var regEx = /("(.*?)")|([^,\s][^,]*)/g;
 			data.forEach(function(item,index,array){
 				if(index === 0 ){
 					arr = item.split(',');
 					arrKey.push(arr);
 				} else {
-					arr = item.split(',');
+					arr = item.match(regEx); 
 					arrVal.push(arr);
 				}
 			}); 
 			return { arrKey, arrVal }; 
 		}
-		return new Promise(function(resolve){
-			resolve(createValueObject(data));
-		});
+		return createValueObject(data); 
 	} 
   
 	updateCSVRowTItles(data){
 		function sendValue(key,val){
+
 			var obj;
 			var arr = [];
 			val.forEach((item,i,array) => {
 				obj = {};
+				 
 				item.forEach(function(elem,index,array){
 					obj[key[index]] = elem;	
 				});
@@ -61,21 +74,16 @@ class CSVToJson {
 			});
 			return arr;
 		}
-
-		return new Promise(function(resolve){
-			var key = data.arrKey[0];
-			var val = data.arrVal;
-			resolve(sendValue(key,val));
-		});
+		return sendValue(data.arrKey[0],data.arrVal);	
 	}
 
 	read(path,fun){
-		 this.readFile(path)
+		this.readFile(path)
 		.then(this.createArrayRows)
 		.then(this.createArrayKeyValue)
 		.then(this.updateCSVRowTItles)
 		.then(function(data){ 
-			 fun(data);
+			fun(data);
 		});		
 	}
 
@@ -84,14 +92,13 @@ class CSVToJson {
 	  for (var attrname in obj1) { obj3[attrname] = obj1[attrname]; }
 	  for (var attrname in obj2) { obj3[attrname] = obj2[attrname]; }
 	  return obj3;
-	}
+	} 
 
 	strip(str){
 	  var regEx = /"|'(?=\w)/g; 
 	  var obj;
 	  str.map(function(item){
 	  	for(obj in item){
-	  		console.log(item[obj]);
 	  		item[obj] = item[obj].replace(regEx,"");
 	  	}
 	  });
@@ -102,6 +109,7 @@ class CSVToJson {
 		var defaults = {
 			stripComma : false
 		};
+		
 		var defaults = this.extend(defaults,option || {});
 		if(defaults.stripComma){
 			data = this.strip(data);
